@@ -77,34 +77,16 @@
     </div>
 </div>
 <style type="text/css">
-    .deng-box {
+    .deng-box, .deng-box1, .deng-box2, .deng-box3 {
         position: fixed;
         top: -40px;
-        right: 150px;
         z-index: 9999;
         pointer-events: none;
     }
-    .deng-box1 {
-        position: fixed;
-        top: -30px;
-        right: 10px;
-        z-index: 9999;
-        pointer-events: none
-    }
-    .deng-box2 {
-        position: fixed;
-        top: -40px;
-        left: 150px;
-        z-index: 9999;
-        pointer-events: none
-    }
-    .deng-box3 {
-        position: fixed;
-        top: -30px;
-        left: 10px;
-        z-index: 9999;
-        pointer-events: none
-    }
+    .deng-box { right: clamp(76px, 14vw, 150px); }
+    .deng-box1 { right: 0; top: -30px; }
+    .deng-box2 { left: clamp(76px, 14vw, 150px); }
+    .deng-box3 { left: 0; top: -30px; }
     .deng-box1 .deng,
     .deng-box3 .deng {
         position: relative;
@@ -330,6 +312,22 @@ canvas {
   font-size: 3rem;
 }
 
+@media (max-width: 600px) {
+  .deng-box { right: 72px; top: -48px; }
+  .deng-box2 { left: 72px; top: -48px; }
+  .deng-box1 { right: -28px; top: -40px; }
+  .deng-box3 { left: -28px; top: -40px; }
+  .deng, .deng-box1 .deng, .deng-box3 .deng { transform: scale(.62); transform-origin: top center; margin: 42px 0 0; }
+  .deng-box, .deng-box2 { width: 70px; }
+  .deng-box1, .deng-box3 { width: 60px; }
+  .middle { width: 100%; padding: 0 8px; box-sizing: border-box; }
+  .label { font-size: clamp(1.2rem, 5.2vw, 1.6rem); }
+  .time span { padding: 0 8px; font-size: .58rem; }
+  .time span div { font-size: clamp(1.45rem, 7vw, 2rem); }
+  .site-footer { bottom: 12px; }
+  .site-footer a { font-size: 13px; }
+  .site-runtime { font-size: 10px; }
+}
 @media (max-width: 740px) {
   .label {
     font-size: 1.7rem;
@@ -344,9 +342,11 @@ canvas {
 }
 </style>
 <style>
-.site-footer { position: fixed; bottom: 16px; left: 0; width: 100%; text-align: center; z-index: 10000; }
+.site-footer { position: fixed; bottom: 14px; left: 0; width: 100%; text-align: center; z-index: 10000; display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 0 10px; box-sizing: border-box; }
 .site-footer a { color: #f4c36a; text-decoration: none; font-size: 14px; text-shadow: 0 1px 4px #000; }
 .site-footer a:hover { text-decoration: underline; }
+.site-footer .site-link { color: #f4c36a; }
+.site-runtime { color: #f4c36a; font-size: 12px; line-height: 1.5; text-shadow: 0 1px 4px #000; }
 </style>
 </head>
 <body>
@@ -372,7 +372,7 @@ canvas {
 		Seconds </span>
 	</div>
 </div>
-<footer class="site-footer"><a href="https://83955506.xyz" target="_blank" rel="noopener noreferrer">83955506.xyz</a></footer>
+<footer class="site-footer"><a class="site-link" href="https://83955506.xyz" target="_blank" rel="noopener noreferrer">楠神-矩阵网站 点击直达</a><div class="site-runtime" id="site-runtime">网站已经运行 0天 00小时 00分 00秒</div></footer>
 
 <script>
 class Snowflake {
@@ -530,6 +530,21 @@ function updateCountdown() {
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
+
+// 网站运行时间：从北京时间 2026-01-01 00:00:00 开始计算
+const runtimeElement = document.getElementById("site-runtime");
+const siteStart = new Date("2026-01-01T00:00:00+08:00").getTime();
+function updateSiteRuntime() {
+  const elapsed = Math.max(0, Date.now() - siteStart);
+  const totalSeconds = Math.floor(elapsed / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  runtimeElement.textContent = `网站已经运行 ${days}天 ${String(hours).padStart(2, "0")}小时 ${String(minutes).padStart(2, "0")}分 ${String(seconds).padStart(2, "0")}秒`;
+}
+updateSiteRuntime();
+setInterval(updateSiteRuntime, 1000);
 </script>
 
 </body>
