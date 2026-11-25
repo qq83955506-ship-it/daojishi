@@ -343,10 +343,15 @@ canvas {
   }
 }
 </style>
+<style>
+.site-footer { position: fixed; bottom: 16px; left: 0; width: 100%; text-align: center; z-index: 10000; }
+.site-footer a { color: #f4c36a; text-decoration: none; font-size: 14px; text-shadow: 0 1px 4px #000; }
+.site-footer a:hover { text-decoration: underline; }
+</style>
 </head>
 <body>
 <div class="middle">
-	<h1 class="label">距离2027年春节还有: </h1>
+	<h1 class="label" id="countdown-title">距离春节还有: </h1>
 	<div class="time">
 		<span>
 		<div id="d">
@@ -367,6 +372,7 @@ canvas {
 		Seconds </span>
 	</div>
 </div>
+<footer class="site-footer"><a href="https://83955506.xyz" target="_blank" rel="noopener noreferrer">83955506.xyz</a></footer>
 
 <script>
 class Snowflake {
@@ -460,32 +466,70 @@ new Snow();
 
 ////////////////////////////////////////////////////////////
 
-// Simple CountDown Clock
-
-const comingdate = new Date("February 6, 2027 00:00:00");
-
+// 春节日期表：倒计时到达后自动切换到下一个春节
+const springFestivalDates = {
+  "2027": "2027-02-06",
+  "2028": "2028-01-26",
+  "2029": "2029-02-13",
+  "2030": "2030-02-03",
+  "2031": "2031-01-23",
+  "2032": "2032-02-11",
+  "2033": "2033-01-31",
+  "2034": "2034-02-19",
+  "2035": "2035-02-08",
+  "2036": "2036-01-28",
+  "2037": "2037-02-15",
+  "2038": "2038-02-04",
+  "2039": "2039-01-24",
+  "2040": "2040-02-12",
+  "2041": "2041-02-01",
+  "2042": "2042-01-22",
+  "2043": "2043-02-10",
+  "2044": "2044-01-30",
+  "2045": "2045-02-17",
+  "2046": "2046-02-06",
+  "2047": "2047-01-26",
+  "2048": "2048-02-14",
+  "2049": "2049-02-02",
+  "2050": "2050-01-23"
+};
+const countdownTitle = document.getElementById("countdown-title");
 const d = document.getElementById("d");
 const h = document.getElementById("h");
 const m = document.getElementById("m");
 const s = document.getElementById("s");
 
-const countdown = setInterval(() => {
-  const now   = new Date();
-  const des   = comingdate.getTime() - now.getTime();
-  const days  = Math.floor(des / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((des % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins  = Math.floor((des % (1000 * 60 * 60)) / (1000 * 60));
-  const secs  = Math.floor((des % (1000 * 60)) / 1000);
+function getNextSpringFestival(now) {
+  const years = Object.keys(springFestivalDates).map(Number).sort((a, b) => a - b);
+  for (const year of years) {
+    const target = new Date(springFestivalDates[year] + "T00:00:00");
+    if (target.getTime() > now.getTime()) return { year, target };
+  }
+  // 日期表覆盖至2050年；超过后先按每年2月1日兜底，需更新日期表以保证准确
+  const year = now.getFullYear() + 1;
+  return { year, target: new Date(year, 1, 1, 0, 0, 0) };
+}
 
-  d.innerHTML = getTrueNumber(days);
-  h.innerHTML = getTrueNumber(hours);
-  m.innerHTML = getTrueNumber(mins);
-  s.innerHTML = getTrueNumber(secs);
+const getTrueNumber = value => String(Math.max(0, value)).padStart(2, "0");
 
-  if (x <= 0) clearInterval(x);
-}, 1000);
+function updateCountdown() {
+  const now = new Date();
+  const next = getNextSpringFestival(now);
+  const remaining = Math.max(0, next.target.getTime() - now.getTime());
+  const days = Math.floor(remaining / 86400000);
+  const hours = Math.floor((remaining % 86400000) / 3600000);
+  const mins = Math.floor((remaining % 3600000) / 60000);
+  const secs = Math.floor((remaining % 60000) / 1000);
 
-const getTrueNumber = x => (x < 10 ? "0" + x : x);
+  countdownTitle.textContent = `距离${next.year}年春节还有:`;
+  d.textContent = getTrueNumber(days);
+  h.textContent = getTrueNumber(hours);
+  m.textContent = getTrueNumber(mins);
+  s.textContent = getTrueNumber(secs);
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
 </script>
 
 </body>
